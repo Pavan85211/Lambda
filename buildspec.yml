@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - pip install -r requirements.txt  # If your Lambda function has dependencies
+
+  build:
+    commands:
+      - echo Packaging Lambda function...
+      - zip -r lambda_function.zip .     # Zip all the files in the repository
+
+  post_build:
+    commands:
+      - echo Deploying Lambda function...
+      - aws lambda update-function-code \
+          --function-name $LAMBDA_FUNCTION_NAME \
+          --zip-file fileb://lambda_function.zip
+      - echo Lambda function updated successfully.
+
+env:
+  variables:
+    LAMBDA_FUNCTION_NAME: "YourLambdaFunctionName"  # Replace with your Lambda function name
+
+artifacts:
+  files:
+    - lambda_function.zip
